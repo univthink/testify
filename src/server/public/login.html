@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <!-- this file is used by the native client as a simple interface to get username + password from user, login is done by libspotify in C# -->
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Soundbounce</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.1.6/css/ripples.css">
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.2.1/css/material-wfont.min.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.1.6/js/ripples.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.1.6/js/material.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/noUiSlider/6.2.0/jquery.nouislider.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+
+    <style>
+        body{ background-color:#000;}
+        .checkbox {
+            padding-top: 13px !important;
+
+        }
+
+        footer {
+            color: #666;
+            font-size: 12px;
+            position: absolute;
+            bottom: 13px;
+            right: 20px;
+        }
+
+        .logos a {
+            text-align: left;
+           color:rgba(255,255,255,0.7);
+        }
+
+        .logos a {
+            margin-right: 5px;
+        }
+
+        .logos a:hover {
+            color:rgba(255,255,255,1);
+        }
+
+        .version {
+            position:absolute;
+            left:20px;
+            bottom:20px;
+
+            color:rgba(255,255,255,0.7);
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        #login-box {
+            position: relative;
+            top: calc(50% - 250px);
+        }
+
+        #homebackgroundimage {
+            background-image: url(img/backgrounds/11.jpg);
+            -webkit-filter:blur(20px);
+        }
+        #homebackgroundcover {
+
+            background-color: rgba(120, 120, 120, 0.2);
+        }
+
+        #loginContainer {
+            height: 100%;
+            opacity:0;
+            transition: opacity 1.28s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #loginContainer.showHome{
+            opacity:1;
+        }
+
+        .glass-surround{
+            background-color:rgba(200,200,200,0.3);
+            border-radius:3px;
+            padding:15px;
+        }
+
+        #loginlogo{
+            text-align:center;
+            padding-top:15px;
+            padding-bottom:25px;
+        }
+        .advanced-link{
+            font-size:10px;
+        }
+        .advanced-options{
+            display:none;
+        }
+    </style>
+</head>
+<body>
+
+<!--
+<div class="jumbotron">
+    <div class="container">
+        <img src="img/soundbounce-white-bg.png"/>
+
+        <p>Music sounds better together.</p>
+    </div>
+</div>
+-->
+<div id="homebackgroundimage" class="backgroundimage visible"></div>
+<div id="homebackgroundcover"></div>
+<div class="container" id="loginContainer">
+    <div class="row" style="padding-top: 20px;" id="login-box">
+        <div class="col-md-offset-3 col-sm-offset-2 col-sm-8 col-md-6 col-lg-5 ">
+            <div class="glass-surround">
+                <div id="loginlogo">
+                  <img src="img/soundbounce-white-text.png" style="width:300px;  height:auto;" />
+                </div>
+                <div class="panel panel-default">
+
+                    <div class="panel-body">
+                        <form class="form-horizontal" id="loginForm">
+                            <fieldset>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                    <span class="help-block">You'll need a <span
+                                            class="text-success">Spotify Premium</span> account to use Soundbounce.</span>
+                                        <hr>
+                                        <!--<h3>Login</h3>-->
+                                        <input type="text" class="form-control" id="inputEmail"
+                                               placeholder="Spotify username or facebook email">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+
+                                        <input type="password" class="form-control" id="inputPassword"
+                                               placeholder="Password">
+                                    </div>
+                                    <div class="col-sm-12">
+
+                                        <div class="checkbox pull-left">
+                                            <label>
+                                                <input type="checkbox" id="remember" checked="checked"><span
+                                                    class="toggle"></span> Remember
+                                                password?
+                                            </label>
+                                        </div>
+
+                                        <input type="submit" class="btn btn-success  pull-right" value="Log in »"/>
+
+                                    </div>
+                                    <div class="col-sm-12">
+
+                                        <a href="#advanced" class="advanced-link">Having trouble connecting to rooms?</a>
+                                        <div class="advanced-options">
+                                            Websocket port: <select id="websocket"><option value="80">80 (default)</option><option value="443">443</option><option value="8080">8080</option></select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<span class="version"> Libspotify not loaded?</span>
+<footer>
+    <p>
+
+    <span class="logos">
+        <a href="javascript:spotifyBrowserApi.openUrl('https://www.facebook.com/soundbounce.org');"><i
+                class="fa fa-facebook-square fa-2x"></i></a>
+        <a href="javascript:spotifyBrowserApi.openUrl('https://twitter.com/_soundbounce_');"><i
+                class="fa fa-twitter-square fa-2x"></i></a>
+        <a href="javascript:spotifyBrowserApi.openUrl('https://github.com/pdaddyo/soundbounce/');"><i
+                class="fa fa-github-square fa-2x"></i></a>
+    </span></p>
+</footer>
+
+<script>
+
+    $('.advanced-link').click(function () {
+        $('.advanced-link').hide();
+        $('.advanced-options').slideDown();
+    });
+    function randomBg(){
+        $('#homebackgroundimage').css({backgroundImage:"url(img/backgrounds/"+(Math.floor(Math.random()*10)+1)+".jpg)"});
+    }
+
+    $(function () {
+        var storedPort = $.cookie('port');
+        if(storedPort){
+            $('#websocket').val(storedPort);
+        }
+        setTimeout(function () {
+            $('#loginContainer').addClass('showHome');
+            }, 500);
+
+        randomBg();
+        $('#loginlogo img').click(function (){ randomBg();});
+        $.material.init();
+
+        try {
+            $('.version').text('v' + spotifyBrowserApi.getVersion());
+        } catch (err) {
+            $('.help-block').text("Oops - cannot find libspotify.  Please double-check the installation instructions for your platform (there is an extra step detailed in the download for OSX).").css({color:'red'});
+        }
+
+
+        var user = localStorage.getItem('username');
+        var pass = localStorage.getItem('pass');
+
+        // clear old cookie storage method
+        $.cookie('pass', '', {expires: -1});
+
+        if (user) {
+            $('#inputEmail').val(user);
+            if (pass) {
+                $('#inputPassword').val(atob(pass));
+                $('.btn-success').focus();
+            }
+            else {
+                $('#inputPassword').focus();
+            }
+
+        }
+        else {
+            $('#inputEmail').focus();
+        }
+
+        $('#loginForm').submit(function (e) {
+            e.preventDefault();
+            // $('#loginContainer').css({opacity:0.2});
+
+            // save login name
+            localStorage.setItem("username", $('#inputEmail').val());
+
+            var remember = $('#remember')[0].checked;
+
+            if (remember) {
+                localStorage.setItem("pass", btoa($('#inputPassword').val()));
+            }
+            else {
+                localStorage.setItem("pass", null);
+            }
+
+            $.cookie('port', $('#websocket').val(),{ expires: 300 });
+
+            // the host browser Spotify API handles the login
+            spotifyBrowserApi.login($('#inputEmail').val(), $('#inputPassword').val());
+            $('#loginForm').html("Just a moment - we're connecting to Spotify...");
+
+            return false;
+        });
+
+    });
+</script>
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-56980923-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+
+</body>
+</html>
